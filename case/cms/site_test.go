@@ -2,7 +2,6 @@ package cms
 
 import (
 	"fmt"
-	"lbswebui/public"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,15 +15,14 @@ type certData struct {
 }
 
 var certMap map[string]certData
-var wd selenium.WebDriver
 
 const (
+	SITE_LIST    = SERVER + "/cert/ca/site_list"
 	BACK_UPLOAD  = "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/a[2]/span"
 	BACK_CONTENT = "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/table[2]/tbody/tr/td/form/table/tbody/tr/td/a[2]/span"
 )
 
 func init() {
-	var err error
 	certMap = make(map[string]certData)
 	certMap["c1"] = certData{
 		Cert:     "D:\\File\\work\\task\\GAD测试\\验证扩展用法\\server2\\cert_rsa_2048_lbs-cs-2.com_4688d7aa-bd26-489c-91a1-c8ad21af8182.pem",
@@ -49,171 +47,170 @@ func init() {
 		Key:      "",
 		Password: "lbs@123.com",
 	}
+}
 
- 	wd, err = public.GetLogin()
-	if wd == nil {
-		panic(err)
-	}
-	// wd, err = public.StartChromDriver()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// // defer wd.Quit()
-
-	// wd, err = public.Login(wd)
-	// if err != nil {
-	// 	panic(err)
-	// }
+func TestC0(t *testing.T) {
+	wd, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = DeleteAllCert(wd, SITE_LIST)
+	assert.Equal(t, err, nil)
 }
 
 func TestC1(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certMap["c1"]) // 导入证书
+	err = uploadCert(sitePage, certMap["c1"]) // 导入证书
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 
-	_, err = wd.FindElement(selenium.ByLinkText, "lbs-cs-2.com")
+	_, err = sitePage.FindElement(selenium.ByLinkText, "lbs-cs-2.com")
 	assert.Equal(t, err, nil)
 }
 
 func TestC2(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certMap["c2-sig"]) // 导入签名证书
+	err = uploadCert(sitePage, certMap["c2-sig"]) // 导入签名证书
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certMap["c2-enc"]) // 导入加密证书
+	err = uploadCert(sitePage, certMap["c2-enc"]) // 导入加密证书
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 
-	enc, err := wd.FindElement(selenium.ByLinkText, "gad_test1.com[加密证书]")
+	enc, err := sitePage.FindElement(selenium.ByLinkText, "gad_test1.com[加密证书]")
 	assert.Equal(t, err, nil)
 	err = enc.Click() // 进入详情界面
 	assert.Equal(t, err, nil)
-	err = back(wd, BACK_CONTENT) // 返回证书列表
+	err = back(sitePage, BACK_CONTENT) // 返回证书列表
 	assert.Equal(t, err, nil)
 
-	sig, err := wd.FindElement(selenium.ByLinkText, "gad_test1.com[签名证书]")
+	sig, err := sitePage.FindElement(selenium.ByLinkText, "gad_test1.com[签名证书]")
 	assert.Equal(t, err, nil)
 	err = sig.Click() // 进入详情界面
 	assert.Equal(t, err, nil)
-	err = back(wd, BACK_CONTENT) // 返回证书列表
+	err = back(sitePage, BACK_CONTENT) // 返回证书列表
 	assert.Equal(t, err, nil)
 }
 func TestC3(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certMap["c3-pfx"]) // 导入pfx
+	err = uploadCert(sitePage, certMap["c3-pfx"]) // 导入pfx
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 
-	_, err = wd.FindElement(selenium.ByLinkText, "李本帅")
+	_, err = sitePage.FindElement(selenium.ByLinkText, "李本帅")
 	assert.Equal(t, err, nil)
 }
 
 // 异常测试：导入证书链
 func TestC4(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certData{
+	err = uploadCert(sitePage, certData{
 		Cert: "D:\\File\\work\\task\\冒烟测试\\rsa\\ca\\sadg_rsa_local.pem", // 导入证书链
 	}) // 导入pfx
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	s, err := wd.AlertText()
+	s, err := sitePage.AlertText()
 	assert.Equal(t, err, nil)
 	assert.Equal(t, s, "导入证书失败 code:500")
 
-	err = wd.AcceptAlert()
+	err = sitePage.AcceptAlert()
 	assert.Equal(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 }
 
 // 导入der格式证书，没有秘钥导入失败
 func TestC5(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certData{
+	err = uploadCert(sitePage, certData{
 		Cert: "D:\\File\\work\\task\\冒烟测试\\rsa\\server\\aaa.der", // 导入der证书
 	}) // 导入pfx
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	s, err := wd.AlertText()
+	s, err := sitePage.AlertText()
 	assert.Equal(t, err, nil)
 	assert.Equal(t, s, "导入证书失败 code:500")
 
-	err = wd.AcceptAlert()
+	err = sitePage.AcceptAlert()
 	assert.Equal(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 }
 
 func TestC6(t *testing.T) {
-	var err error
-	err = gotoUpload(wd) // 进入证书导入界面
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
 
-	err = uploadCert(wd, certData{
+	err = uploadCert(sitePage, certData{
 		Cert: "D:\\File\\work\\task\\冒烟测试\\rsa\\server\\aaa.der",      // 导入der证书
 		Key:  "D:\\File\\work\\task\\冒烟测试\\rsa\\server\\test.com.key", // 导入私钥
 	}) // 导入pfx
 	assert.Equal(t, err, nil)
 
-	err = uploadClick(wd) // 点击上传
+	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	_, err = wd.AlertText()
+	_, err = sitePage.AlertText()
 	assert.NotEqual(t, err, nil)
 
-	err = back(wd, BACK_UPLOAD) // 点击返回
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 
-	_, err = wd.FindElement(selenium.ByLinkText, "test.com")
+	_, err = sitePage.FindElement(selenium.ByLinkText, "test.com")
 	assert.Equal(t, err, nil)
 }
 
 func uploadCert(wd selenium.WebDriver, certObj certData) error {
+
 	cert := certObj.Cert
 	key := certObj.Key
 	password := certObj.Password

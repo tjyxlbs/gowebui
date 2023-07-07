@@ -4,23 +4,23 @@ import (
 	"github.com/tebeka/selenium"
 )
 
-var wd selenium.WebDriver
+var PublicWd selenium.WebDriver
 
 func GetLogin() (selenium.WebDriver, error) {
 	var err error
-	if wd != nil {
-		return wd, nil
+	if PublicWd != nil {
+		return PublicWd, nil
 	}
-	wd, err = StartChromDriver()
+	PublicWd, err = StartChromDriver()
 	if err != nil {
 		return nil, err
 	}
 	// defer wd.Quit()
-	wd, err = Login(wd)
+	PublicWd, err = Login(PublicWd)
 	if err != nil {
 		return nil, err
 	}
-	return wd, nil
+	return PublicWd, nil
 }
 
 func Login(wd selenium.WebDriver) (selenium.WebDriver, error) {
