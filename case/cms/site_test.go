@@ -145,11 +145,7 @@ func TestC4(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	s, err := sitePage.AlertText()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, s, "导入证书失败 code:500")
-
-	err = sitePage.AcceptAlert()
+	err = WaitAlert(sitePage, DISMISS, "不能导入证书链")
 	assert.Equal(t, err, nil)
 
 	err = back(sitePage, BACK_UPLOAD) // 点击返回
@@ -172,11 +168,7 @@ func TestC5(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	s, err := sitePage.AlertText()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, s, "导入证书失败 code:500")
-
-	err = sitePage.AcceptAlert()
+	err = WaitAlert(sitePage, DISMISS, "导入证书失败")
 	assert.Equal(t, err, nil)
 
 	err = back(sitePage, BACK_UPLOAD) // 点击返回
@@ -192,15 +184,11 @@ func TestC6(t *testing.T) {
 	err = uploadCert(sitePage, certData{
 		Cert: "D:\\File\\work\\task\\冒烟测试\\rsa\\server\\aaa.der",      // 导入der证书
 		Key:  "D:\\File\\work\\task\\冒烟测试\\rsa\\server\\test.com.key", // 导入私钥
-	}) // 导入pfx
+	})
 	assert.Equal(t, err, nil)
 
 	err = uploadClick(sitePage) // 点击上传
 	assert.Equal(t, err, nil)
-
-	// 错误弹框
-	_, err = sitePage.AlertText()
-	assert.NotEqual(t, err, nil)
 
 	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)

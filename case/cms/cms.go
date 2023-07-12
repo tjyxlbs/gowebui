@@ -2,12 +2,15 @@ package cms
 
 import (
 	"lbswebui/public"
+	"time"
 
 	"github.com/tebeka/selenium"
 )
 
 const (
-	SERVER = "https://192.168.190.128:60443"
+	SERVER  = "https://192.168.190.128:60443"
+	ACCEPT  = "accept"
+	DISMISS = "DISMISS"
 )
 
 // 删除所有证书
@@ -38,18 +41,19 @@ func DeleteAllCert(wd selenium.WebDriver, url string) error {
 	if err != nil {
 		return err
 	}
+	// b, err := del.IsDisplayed()
+	// if err != nil {
+	// 	return err
+	// }
+	// fmt.Println(b)
 	// 确认删除
 	err = wd.AcceptAlert()
 	if err != nil {
 		return err
 	}
+
 	// 证书被其他服务引用，弹窗显示
-	err = wd.AcceptAlert()
-	if err != nil {
-		// 有服务引用
-	} else {
-		// 没有服务引用
-	}
+	wd.AcceptAlert()
 	return nil
 }
 
@@ -66,4 +70,29 @@ func SwitchToPage(url string) (selenium.WebDriver, error) {
 		return nil, err
 	}
 	return wd, nil
+}
+
+func WaitAlert(wd selenium.WebDriver, op, expect string) error {
+	var IsAlert = func(wd selenium.WebDriver) (bool, error) {
+		s, err := wd.AlertText()
+		if err != nil {
+			// 还没有弹窗出现
+			return false, nil // 继续到下一个间隔尝试获取alert()
+		}
+		if expect != "" && s != expect {
+			return false, nil
+		}
+		return true, nil
+	}
+	err := wd.WaitWithTimeoutAndInterval(IsAlert, 10*time.Second, 500*time.Millisecond)
+	if err != nil {
+		return err
+	}
+	// 执行操作
+	if op == ACCEPT {
+		err = wd.AcceptAlert()
+	} else {
+		err = wd.DismissAlert()
+	}
+	return err
 }
