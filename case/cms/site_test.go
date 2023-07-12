@@ -2,6 +2,7 @@ package cms
 
 import (
 	"fmt"
+	"lbswebui/public"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -145,7 +146,7 @@ func TestC4(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	err = WaitAlert(sitePage, DISMISS, "不能导入证书链")
+	err = WaitAlert(sitePage, public.DISMISS, "不能导入证书链")
 	assert.Equal(t, err, nil)
 
 	err = back(sitePage, BACK_UPLOAD) // 点击返回
@@ -168,7 +169,7 @@ func TestC5(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	// 错误弹框
-	err = WaitAlert(sitePage, DISMISS, "导入证书失败")
+	err = WaitAlert(sitePage, public.DISMISS, "导入证书失败")
 	assert.Equal(t, err, nil)
 
 	err = back(sitePage, BACK_UPLOAD) // 点击返回
@@ -194,6 +195,25 @@ func TestC6(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	_, err = sitePage.FindElement(selenium.ByLinkText, "test.com")
+	assert.Equal(t, err, nil)
+}
+
+func TestC7(t *testing.T) {
+	sitePage, err := SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
+	assert.Equal(t, err, nil)
+
+	err = uploadCert(sitePage, certData{
+		Cert: "D:\\File\\work\\task\\冒烟测试\\1024-RSA\\a.hello.com-RSA-1024.pem", // 导入证书
+		Key:  "D:\\File\\work\\task\\冒烟测试\\1024-RSA\\a.hello.com-RSA-1024.key", // 导入私钥
+	})
+	assert.Equal(t, err, nil)
+
+	err = uploadClick(sitePage) // 点击上传
+	assert.Equal(t, err, nil)
+
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
 	assert.Equal(t, err, nil)
 }
 

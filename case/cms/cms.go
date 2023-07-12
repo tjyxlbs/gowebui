@@ -8,9 +8,7 @@ import (
 )
 
 const (
-	SERVER  = "https://192.168.190.128:60443"
-	ACCEPT  = "accept"
-	DISMISS = "DISMISS"
+	SERVER = "https://192.168.190.128:60443"
 )
 
 // 删除所有证书
@@ -41,13 +39,7 @@ func DeleteAllCert(wd selenium.WebDriver, url string) error {
 	if err != nil {
 		return err
 	}
-	// b, err := del.IsDisplayed()
-	// if err != nil {
-	// 	return err
-	// }
-	// fmt.Println(b)
-	// 确认删除
-	err = wd.AcceptAlert()
+	err = WaitAlert(wd, public.ACCEPT, "")
 	if err != nil {
 		return err
 	}
@@ -89,7 +81,7 @@ func WaitAlert(wd selenium.WebDriver, op, expect string) error {
 		return err
 	}
 	// 执行操作
-	if op == ACCEPT {
+	if op == public.ACCEPT {
 		err = wd.AcceptAlert()
 	} else {
 		err = wd.DismissAlert()
