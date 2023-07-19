@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"lbswebui/public"
 	"testing"
 
 	"github.com/go-playground/assert/v2"
@@ -24,7 +25,7 @@ func testConfigSet(t *testing.T, wd selenium.WebDriver,
 }
 
 func TestCsr1(t *testing.T) {
-	wd, err := SwitchToPage(CSR_PAGE)
+	wd, err := public.SwitchToPage(CSR_PAGE)
 	assert.Equal(t, err, nil)
 	idInfo := make(map[string]string)
 	// 站点名称
@@ -59,7 +60,7 @@ func TestCsr1(t *testing.T) {
 }
 
 func TestCsr2(t *testing.T) {
-	wd, err := SwitchToPage(CSR_PAGE)
+	wd, err := public.SwitchToPage(CSR_PAGE)
 	assert.Equal(t, err, nil)
 	idInfo := make(map[string]string)
 	// 站点名称

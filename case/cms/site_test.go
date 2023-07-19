@@ -51,14 +51,27 @@ func init() {
 }
 
 func TestC0(t *testing.T) {
-	wd, err := SwitchToPage(SITE_LIST)
+	wd, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = DeleteAllCert(wd, SITE_LIST)
 	assert.Equal(t, err, nil)
+	ele, err := wd.FindElement(selenium.ByXPATH, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/form/table/tbody/tr/td[1]/div/a/span")
+	if err != nil {
+		// 证书被其他服务引用，弹窗显示
+		err = WaitAlert(wd, public.ACCEPT, "")
+		assert.Equal(t, err, nil)
+	} else {
+		ok, err := ele.IsDisplayed()
+		if err != nil || !ok {
+			// 证书被其他服务引用，弹窗显示
+			err = WaitAlert(wd, public.ACCEPT, "")
+			assert.Equal(t, err, nil)
+		}
+	}
 }
 
 func TestC1(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -77,7 +90,7 @@ func TestC1(t *testing.T) {
 }
 
 func TestC2(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -112,7 +125,7 @@ func TestC2(t *testing.T) {
 	assert.Equal(t, err, nil)
 }
 func TestC3(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -132,7 +145,7 @@ func TestC3(t *testing.T) {
 
 // 异常测试：导入证书链
 func TestC4(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -155,7 +168,7 @@ func TestC4(t *testing.T) {
 
 // 导入der格式证书，没有秘钥导入失败
 func TestC5(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -177,7 +190,7 @@ func TestC5(t *testing.T) {
 }
 
 func TestC6(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -199,7 +212,7 @@ func TestC6(t *testing.T) {
 }
 
 func TestC7(t *testing.T) {
-	sitePage, err := SwitchToPage(SITE_LIST)
+	sitePage, err := public.SwitchToPage(SITE_LIST)
 	assert.Equal(t, err, nil)
 	err = gotoUpload(sitePage) // 进入证书导入界面
 	assert.Equal(t, err, nil)
@@ -207,6 +220,26 @@ func TestC7(t *testing.T) {
 	err = uploadCert(sitePage, certData{
 		Cert: "D:\\File\\work\\task\\冒烟测试\\1024-RSA\\a.hello.com-RSA-1024.pem", // 导入证书
 		Key:  "D:\\File\\work\\task\\冒烟测试\\1024-RSA\\a.hello.com-RSA-1024.key", // 导入私钥
+	})
+	assert.Equal(t, err, nil)
+
+	err = uploadClick(sitePage) // 点击上传
+	assert.Equal(t, err, nil)
+
+	err = back(sitePage, BACK_UPLOAD) // 点击返回
+	assert.Equal(t, err, nil)
+}
+
+// D:\File\work\task\GAD测试\验证扩展用法\ca
+func TestC8(t *testing.T) {
+	sitePage, err := public.SwitchToPage(SITE_LIST)
+	assert.Equal(t, err, nil)
+	err = gotoUpload(sitePage) // 进入证书导入界面
+	assert.Equal(t, err, nil)
+
+	err = uploadCert(sitePage, certData{
+		Cert: "D:\\File\\work\\task\\GAD测试\\验证扩展用法\\server\\cert_rsa_2048_lbs-rsa-cs.com_d55e9c5e-028c-44a7-9e42-043551e4b7ab.pem", // 导入证书
+		Key:  "D:\\File\\work\\task\\GAD测试\\验证扩展用法\\server\\cert_rsa_2048_lbs-rsa-cs.com_d55e9c5e-028c-44a7-9e42-043551e4b7ab.key", // 导入私钥
 	})
 	assert.Equal(t, err, nil)
 

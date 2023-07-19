@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	SERVER = "https://192.168.190.128:60443"
+	SERVER = public.SERVER
 )
 
 // 删除所有证书
@@ -43,25 +43,7 @@ func DeleteAllCert(wd selenium.WebDriver, url string) error {
 	if err != nil {
 		return err
 	}
-
-	// 证书被其他服务引用，弹窗显示
-	wd.AcceptAlert()
 	return nil
-}
-
-func SwitchToPage(url string) (selenium.WebDriver, error) {
-	var err error
-	wd, err := public.GetLogin()
-	if err != nil {
-		return nil, err
-	}
-
-	// 切换到证书请求
-	err = wd.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	return wd, nil
 }
 
 func WaitAlert(wd selenium.WebDriver, op, expect string) error {

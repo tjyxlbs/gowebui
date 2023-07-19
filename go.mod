@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/go-playground/assert/v2 v2.2.0
-	github.com/go-resty/resty/v2 v2.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tebeka/selenium v0.9.9
 )

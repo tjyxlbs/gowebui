@@ -1,7 +1,8 @@
-package cms
+package server
 
 import (
 	"lbswebui/public"
+	"strings"
 	"testing"
 
 	"github.com/go-playground/assert/v2"
@@ -11,18 +12,18 @@ import (
 var appPage selenium.WebDriver
 
 const (
-	APP_LIST = SERVER + "/srv/trp/service"
+	APP_LIST = public.SERVER + "/srv/trp/service"
 )
 
 func TestApp0(t *testing.T) {
-	appPage, err := SwitchToPage(APP_LIST)
+	appPage, err := public.SwitchToPage(APP_LIST)
 	assert.Equal(t, err, nil)
 	err = deleteAllApp(appPage, APP_LIST)
 	assert.Equal(t, err, nil)
 }
 
 func TestApp1(t *testing.T) {
-	appPage, err := SwitchToPage(APP_LIST)
+	appPage, err := public.SwitchToPage(APP_LIST)
 	assert.Equal(t, err, nil)
 	err = appAdd(appPage)
 	assert.Equal(t, err, nil)
@@ -49,15 +50,26 @@ func TestApp1(t *testing.T) {
 	rsaSites, err := appPage.FindElements(selenium.ByCSSSelector, "option[keytype=\"RSA\"]")
 	assert.Equal(t, err, nil)
 	assert.NotEqual(t, len(rsaSites), 0)
-	err = rsaSites[0].Click()
-	assert.Equal(t, err, nil)
+	bFind := false
+	for _, site := range rsaSites {
+		s, err := site.Text()
+		if err != nil {
+			continue
+		}
+		if strings.Contains(s, "test.com") {
+			err = site.Click()
+			bFind = true
+			assert.Equal(t, err, nil)
+		}
+	}
+	assert.Equal(t, bFind, true)
 	// 保存
 	err = saveApp(appPage)
 	assert.Equal(t, err, nil)
 }
 
 func TestApp2(t *testing.T) {
-	appPage, err := SwitchToPage(APP_LIST)
+	appPage, err := public.SwitchToPage(APP_LIST)
 	assert.Equal(t, err, nil)
 	err = appAdd(appPage)
 	assert.Equal(t, err, nil)
@@ -83,8 +95,19 @@ func TestApp2(t *testing.T) {
 	rsaSites, err := appPage.FindElements(selenium.ByCSSSelector, "option[keytype=\"RSA\"]")
 	assert.Equal(t, err, nil)
 	assert.NotEqual(t, len(rsaSites), 0)
-	err = rsaSites[1].Click()
-	assert.Equal(t, err, nil)
+	bFind := false
+	for _, site := range rsaSites {
+		s, err := site.Text()
+		if err != nil {
+			continue
+		}
+		if strings.Contains(s, "lbs-rsa-cs.com") {
+			err = site.Click()
+			bFind = true
+			assert.Equal(t, err, nil)
+		}
+	}
+	assert.Equal(t, bFind, true)
 	// 保存
 	err = saveApp(appPage)
 	assert.Equal(t, err, nil)
@@ -103,7 +126,7 @@ func deleteAllApp(wd selenium.WebDriver, url string) error {
 		}
 	}
 	// 删除
-	err = public.ClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/form/table[2]/tbody/tr/td/a[1]/span")
+	err = public.EleClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/form/table[2]/tbody/tr/td/a[1]/span")
 	if err != nil {
 		return err
 	}
@@ -133,13 +156,13 @@ func appAdd(wd selenium.WebDriver) error {
 }
 
 func next1(wd selenium.WebDriver) error {
-	return public.ClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/a[1]/span")
+	return public.EleClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/a[1]/span")
 }
 
 func next2(wd selenium.WebDriver) error {
-	return public.ClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table[2]/tbody/tr/td/a[2]/span")
+	return public.EleClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table[2]/tbody/tr/td/a[2]/span")
 }
 
 func saveApp(wd selenium.WebDriver) error {
-	return public.ClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/a[1]/span")
+	return public.EleClickByXpath(wd, "/html/body/table[1]/tbody/tr/td[4]/table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/a[1]/span")
 }
